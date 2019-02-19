@@ -27,7 +27,16 @@ export default class Agenda extends Component {
             {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
             {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
             {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-    ]
+    ], }
+    toggleTask = id => {
+        const tasks = this.state.tasks.map(task => {
+            if(task.id === id){
+                task = {...task}
+                task.doneAt = task.doneAt ? null : new Date()
+            }
+            return task
+        })
+        this.setState({tasks})
     }
     render() {
         return (
@@ -44,7 +53,7 @@ export default class Agenda extends Component {
                 <View style={styles.tasksContainer}>
                    <FlatList data={this.state.tasks} 
                         keyExtractor={item=> `${item.id}`}
-                        renderItem={({item})=> <Task {...item}/>} />
+                        renderItem={({item})=> <Task {...item} toggleTask={this.toggleTask} />} />
                 </View>
             </View>
         )
