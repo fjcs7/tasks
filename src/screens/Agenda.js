@@ -49,15 +49,19 @@ export default class Agenda extends Component {
             this.filterTasks)
     }
 
+    onDeleteTask = id => {
+        const tasks = this.state.tasks.filter(task => task.id !== id)
+        this.setState({tasks}, this.filterTasks)
+    }
+
     filterTasks = () => {
-        
         const filter = this.state.showDoneTasks ? (task => true) : (task => task.doneAt === null)
         const pedding = filter
         const visibleTasks = this.state.tasks.filter(pedding)
         this.setState({visibleTasks})
     }
 
-    toggleFilter = () => {
+    onToggleFilter = () => {
         this.setState({showDoneTasks: !this.state.showDoneTasks},this.filterTasks)
     }
 
@@ -65,7 +69,7 @@ export default class Agenda extends Component {
         this.filterTasks()
     }
 
-    toggleTask = id => {
+    onToggleTask = id => {
         const tasks = this.state.tasks.map(task => {
             if(task.id === id){
                 task = {...task}
@@ -84,7 +88,7 @@ export default class Agenda extends Component {
                         onCancel={() => this.setState({showAddTask:false})} />
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.iconBar}>
-                        <TouchableOpacity onPress={this.toggleFilter}>
+                        <TouchableOpacity onPress={this.onToggleFilter}>
                             <Icon name={this.state.showDoneTasks? 'eye':'eye-slash'}
                                         size={20} color={commonStyles.colors.secondary}/>
                         </TouchableOpacity>
@@ -99,7 +103,8 @@ export default class Agenda extends Component {
                 <View style={styles.tasksContainer}>
                    <FlatList data={this.state.visibleTasks} 
                         keyExtractor={item=> `${item.id}`}
-                        renderItem={({item})=> <Task {...item} toggleTask={this.toggleTask} />} />
+                        renderItem={({item})=> <Task {...item} onToggleTask={this.onToggleTask} 
+                                                 onDelete={this.onDeleteTask}/>} />
                 </View>
                 <ActionButton buttonColor={commonStyles.colors.today}
                     onPress={()=> { this.setState({ showAddTask:true}) }} />
