@@ -1,6 +1,7 @@
 import React,  {Component} from 'react'
 import {
-    StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity, Platform
+    StyleSheet, Text, View, ImageBackground, FlatList, 
+    TouchableOpacity, Platform, AsyncStorage
 } from 'react-native'
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -13,24 +14,7 @@ import AddTask from './AddTask'
 
 export default class Agenda extends Component {
     state = {
-        tasks: [
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-            {id:Math.random(), desc:'Tarefa concluída', estimateAt:new Date(), doneAt:new Date()},
-            {id:Math.random(), desc:'Tarefa pendente', estimateAt:new Date(), doneAt:null},
-        ], 
+        tasks: [], 
         visibleTasks: [],
         showDoneTasks: true,
         showAddTask: false,
@@ -59,14 +43,17 @@ export default class Agenda extends Component {
         const pedding = filter
         const visibleTasks = this.state.tasks.filter(pedding)
         this.setState({visibleTasks})
+        AsyncStorage.setItem('task',JSON.stringify(this.state.tasks))
     }
 
     onToggleFilter = () => {
         this.setState({showDoneTasks: !this.state.showDoneTasks},this.filterTasks)
     }
 
-    componentDidMount = () => {
-        this.filterTasks()
+    componentDidMount = async () => {
+        const data = await AsyncStorage.getItem('task')
+        const tasks = JSON.parse(data) || []
+        this.setState({tasks},this.filterTasks)
     }
 
     onToggleTask = id => {
